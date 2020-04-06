@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using Baku.LibqiDotNet;
-using LibraryForDrone; //fictious
+using LibraryForanotherrobot; //estimated
 
 namespace HoloToolkit.Unity.InputModule.Tests{
     public class xbox_direct : XboxControllerHandlerBase{
@@ -25,7 +25,7 @@ namespace HoloToolkit.Unity.InputModule.Tests{
         private Vector3 newRotation;
 
         public string pepperIP;
-        public string droneIP;
+        public string robotIP;
 
         public float rotation_scalefactor = 0.785f;
 
@@ -35,9 +35,9 @@ namespace HoloToolkit.Unity.InputModule.Tests{
         private QiSession _session;
         public float move_scalefactor = 3.0f;
 
-        //Drone (fictious)
-        private DroneSession session_drone;
-        public float move_scalefactor_drone = 5.0f;
+        //anoter robot (estimated)
+        private RobotSession session_robot;
+        public float move_scalefactor_robot = 5.0f;
         
         void Start(){
             initialPosition = transform.position;
@@ -48,9 +48,9 @@ namespace HoloToolkit.Unity.InputModule.Tests{
                     Debug.Log("Failed to establish connection");
                     return;
                 }
-            //Drone (fictious)
-            }else if(!string.IsNullOrEmpty(droneIP)){
-                session_drone = DroneSession.Create(tcpPrefix + droneIP + portSuffix);
+            //another robot (estimated)
+            }else if(!string.IsNullOrEmpty(robotIP)){
+                session_robot = RobotSession.Create(tcpPrefix + robotIP + portSuffix);
                 if (!_session.IsConnected){
                     Debug.Log("Failed to establish connection");
                     return;
@@ -104,35 +104,35 @@ namespace HoloToolkit.Unity.InputModule.Tests{
                     first_buttonpressed = Time.time;
                 }
             
-            //Drone (fictious)
-            }else if(session_drone.isConnected){
+            //another robot (estimated)
+            }else if(session_robot.isConnected){
                 if (eventData.XboxLeftStickHorizontalAxis != 0 || eventData.XboxLeftStickVerticalAxis != 0){
-                    CallDronesAPI_move(eventData.XboxLeftStickHorizontalAxis * move_scalefactor_drone, eventData.XboxLeftStickVerticalAxis * (-1) * move_scalefactor_drone, 0f);
+                    CallRobotsAPI_move(eventData.XboxLeftStickHorizontalAxis * move_scalefactor_robot, eventData.XboxLeftStickVerticalAxis * (-1) * move_scalefactor_robot, 0f);
                 }
                 if (eventData.XboxLeftBumper_Pressed){
-                    CallDronesAPI_rotate(0f, 0f, rotation_scalefactor);
+                    CallRobotsAPI_rotate(0f, 0f, rotation_scalefactor);
                 }
                 else if (eventData.XboxRightBumper_Pressed){
-                    CallDronesAPI_rotate(0f, 0f, (-1) * rotation_scalefactor);
+                    CallRobotsAPI_rotate(0f, 0f, (-1) * rotation_scalefactor);
                 }
                 if (eventData.XboxB_Pressed){
                     if (Time.time - first_buttonpressed > timeBetweenbuttonpressed){
-                        CallDronesAPI_rotate(0f, 0f, 0f);
+                        CallRobotsAPI_rotate(0f, 0f, 0f);
                     }
                     first_buttonpressed = Time.time;
                 }
                 if (eventData.XboxX_Pressed){
                     if (Time.time - first_buttonpressed > timeBetweenbuttonpressed){
-                        if (droneIP == "192.168.10.53"){
-                            session_drone.Close();
-                            session_drone.Destroy();
-                            droneIP = "192.168.10.54"
-                            session_drone = DroneSession.Create(tcpPrefix + droneIP + portSuffix);
+                        if (robotIP == "192.168.10.53"){
+                            session_robot.Close();
+                            session_robot.Destroy();
+                            robotIP = "192.168.10.54"
+                            session_robot = RobotSession.Create(tcpPrefix + robotIP + portSuffix);
                         }else{
-                            session_drone.Close();
-                            session_drone.Destroy();
-                            droneIP = "192.168.10.53"
-                            session_drone = DroneSession.Create(tcpPrefix + droneIP + portSuffix);
+                            session_robot.Close();
+                            session_robot.Destroy();
+                            robotIP = "192.168.10.53"
+                            session_robot = RobotSession.Create(tcpPrefix + robotIP + portSuffix);
                         } 
                     }
                     first_buttonpressed = Time.time;
